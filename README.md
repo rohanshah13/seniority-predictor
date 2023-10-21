@@ -2,6 +2,14 @@
 
 This repository contains a tool for predicting seniority levels using machine learning models. The process involves data splitting, model training, and inference. Below are the instructions and information for using this tool.
 
+## Installation
+
+Create a virtual environment and run the command,
+
+```bash
+pip install -r requirements.txt
+```
+
 ## Usage
 
 ### Data Splitting
