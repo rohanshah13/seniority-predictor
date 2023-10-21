@@ -37,7 +37,7 @@ python inference.py --model_name [MODEL_NAME]
 
 ## Features
 
-All feature extraction functions are implemented in the `features.py` file. To add a new feature, create an "extract_feature" function that returns a dictionary with the extracted features. Then, add a line to the "extract_row_features" function to update the main "features" dictionary.
+All feature extraction functions are implemented in the `features.py` file. To add a new feature, create an `extract_feature` function that returns a dictionary with the extracted features. Then, add a line to the `extract_row_features` function to update the main "features" dictionary.
 
 ## Models
 
