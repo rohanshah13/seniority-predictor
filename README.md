@@ -24,7 +24,7 @@ python split.py
 To train a model, use the following command, replacing `[MODEL_NAME]` with the name of the desired model. Supported models are:
 
 ```bash
-python main.py --model [MODEL_NAME]
+python main.py --model [MODEL_NAME] --train_path [TRAIN_PATH] --val_path [VAL_PATH]
 ```
 
 - `decision_tree`
