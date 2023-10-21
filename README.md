@@ -2,6 +2,14 @@
 
 This repository contains a tool for predicting seniority levels using machine learning models. The process involves data splitting, model training, and inference. Below are the instructions and information for using this tool.
 
+## Installation
+
+Create a virtual environment and run the command,
+
+```bash
+pip install -r requirements.txt
+```
+
 ## Usage
 
 ### Data Splitting
@@ -37,7 +45,7 @@ python inference.py --model_name [MODEL_NAME]
 
 ## Features
 
-All feature extraction functions are implemented in the `features.py` file. To add a new feature, create an "extract_feature" function that returns a dictionary with the extracted features. Then, add a line to the "extract_row_features" function to update the main "features" dictionary.
+All feature extraction functions are implemented in the `features.py` file. To add a new feature, create an `extract_feature` function that returns a dictionary with the extracted features. Then, add a line to the `extract_row_features` function to update the main "features" dictionary.
 
 ## Models
 
