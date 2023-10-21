@@ -1,5 +1,8 @@
 import pandas as pd
 import argparse
+import warnings
+
+warnings.filterwarnings("ignore", category=FutureWarning)
 
 from constants import LABELS
 from features import extract_row_features

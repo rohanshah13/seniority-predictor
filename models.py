@@ -29,7 +29,6 @@ def train(model_name, features, labels, balance_classes=False):
     # Update the cv_grid by prepending 'model__' to each parameter name
     cv_grid = {f'model__{k}': v for k, v in cv_grid.items()}
 
-
     # Grid search for the best parameters
     grid_search = GridSearchCV(pipeline, param_grid=cv_grid, cv=5, verbose=100)
     
@@ -44,7 +43,7 @@ def train(model_name, features, labels, balance_classes=False):
  
     print('Evaluating on train set...')
     model_name = f'{model_name}_balanced' if balance_classes else model_name
-    eval(grid_search, model_name, features, labels, model_name, split='train')
+    eval(grid_search, model_name, features, labels, split='train')
 
     # Print the best parameters
     print(f'Best parameters: {grid_search.best_params_}')
@@ -84,14 +83,22 @@ def get_decision_tree(use_best_params=True):
     return decision_tree, cv_grid
 
 
-def get_random_forest():
+def get_random_forest(use_best_params=True):
     random_forest = RandomForestClassifier()
     cv_grid = {
+        'n_estimators': [20, 40, 60], 
+        'max_depth': [10, 20], 
+        'min_samples_split': [4,6], 
+        'min_samples_leaf': [2,3,5]
+    }
+    best_params = {
         'n_estimators': [40], 
         'max_depth': [20], 
         'min_samples_split': [4], 
         'min_samples_leaf': [3]
     }
+    if use_best_params:
+        return random_forest, best_params
     return random_forest, cv_grid
 
 
@@ -116,7 +123,7 @@ def get_svm():
     return svm, cv_grid
 
 
-def get_logistic_regression(use_best_params=False):
+def get_logistic_regression(use_best_params=True):
     logistic_regression = LogisticRegression(class_weight='balanced')
     cv_grid = {
         'C': [0.1, 1, 10, 100]
@@ -186,10 +193,10 @@ class CustomTFIDF(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         vectorizer = TfidfVectorizer(max_features=100)
         vectorizer = vectorizer.fit(X['job_titles'])
-        # feature_names = list(vectorizer.get_feature_names_out())
-        # vocabulary = list(set(feature_names + TITLE_KEYWORDS))
-        # vectorizer = TfidfVectorizer(vocabulary=vocabulary)
-        # vectorizer = vectorizer.fit(X['job_titles'])
+        feature_names = list(vectorizer.get_feature_names_out())
+        vocabulary = list(set(feature_names + TITLE_KEYWORDS))
+        vectorizer = TfidfVectorizer(vocabulary=vocabulary)
+        vectorizer = vectorizer.fit(X['job_titles'])
         self.vectorizer = vectorizer
         return self
 

@@ -1,0 +1,7 @@
+figures/
+models/
+__pycache__/
+*.train
+*.test
+*.val
+rough.py

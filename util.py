@@ -119,11 +119,11 @@ def compute_metrics(labels, predictions, prob_predictions,  model_name, split='v
     print(f'{split} accuracy: {accuracy}')
 
     # Accuracy at top 2
-    top2_accuracy = top_k_accuracy_score(labels, prob_predictions, k=2)
+    top2_accuracy = top_k_accuracy_score(labels, prob_predictions, k=2, labels=np.arange(len(LABELS)))
     print(f'{split} top 2 accuracy: {top2_accuracy}')
 
     # Accuracy at top 3
-    top3_accuracy = top_k_accuracy_score(labels, prob_predictions, k=3)
+    top3_accuracy = top_k_accuracy_score(labels, prob_predictions, k=3, labels=np.arange(len(LABELS)))
     print(f'{split} top 3 accuracy: {top3_accuracy}')
 
     # Precision

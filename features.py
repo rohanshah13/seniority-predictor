@@ -5,21 +5,34 @@ import warnings
 from nltk.corpus import stopwords
 stopwords = set(stopwords.words('english'))
 
-from sklearn.feature_extraction.text import TfidfVectorizer
-
 from util import extract_time, check_degree_type, clean_text
 from constants import DEGREE_LIST, CURRENT_DATE, TITLE_KEYWORDS
 
 
 def extract_row_features(row):
+    '''
+    Extracts features from a row of the dataframe.
+    '''
     features = {}
-    features.update(extract_years_experience(row['experience']))
-    features.update(extract_job_titles(row['experience']))     
-    features.update(extract_degree_types(row['education']))
+    if isinstance(row, (pd.Series, dict)):
+        if 'experience' in row:
+            features.update(extract_years_experience(row.name, row['experience']))
+            features.update(extract_job_titles(row.name, row['experience']))
+        else:
+            features.update({'years_experience': 0, 'num_jobs': 0, 'job_titles': ''})
+            warnings.warn(f'experience not found in row: {row.name}')
+        if 'education' in row:
+            features.update(extract_degree_types(row.name, row['education']))
+        else:
+            features.update({degree_type: 0 for degree_type in DEGREE_LIST})
+            warnings.warn(f'education not found in row: {row.name}')
     return features
 
 
-def extract_years_experience(experience_list):
+def extract_years_experience(idx, experience_list):
+    '''
+    Extracts the non-overlapping years of experience from the experience_list.
+    '''
     feature = {}
     if isinstance(experience_list, (list, tuple)):
         # Extract (start_time, date_time) tuples from experience_list
@@ -39,11 +52,14 @@ def extract_years_experience(experience_list):
         feature['years_experience'] = years_experience
         feature['num_jobs'] = len(experience_list)
     else:
-        warnings.warn('experience_list is not a list or tuple')
+        warnings.warn(f'experience_list is not a list or tuple in row: {idx}')
     return feature
 
 
-def extract_degree_types(education_list):
+def extract_degree_types(idx, education_list):
+    '''
+    Extracts the degree categories from the education_list.
+    '''
     degree_dict = {degree_type: 0 for degree_type in DEGREE_LIST}
     if isinstance(education_list, (list, tuple)):
         for education in education_list:
@@ -51,16 +67,16 @@ def extract_degree_types(education_list):
                 degree_type = check_degree_type(education['degree'])
                 degree_dict[degree_type] = 1
     else:
-        warnings.warn('education_list is not a list or tuple')
+        warnings.warn(f'education_list is not a list or tuple in row: {idx}')
     return degree_dict
 
 
-def extract_job_titles(experience_list):
+def extract_job_titles(idx, experience_list):
     '''
-    Extract job titles from experience_list that are within 5 years of CURRENT_DATE
+    Extracts the most recent job title(s) from the experience_list and returns a string of concatenated job titles.
     '''
+    features = {}
     if isinstance(experience_list, (list, tuple)):
-        features = {}
         # Extract the max end_time from experience_list
         time_periods = [extract_time(experience['time']) if isinstance(experience, dict) and 'time' in experience else (None, None) for experience in experience_list]
         all_job_titles = [experience['title'] if isinstance(experience, dict) and 'title' in experience else "" for experience in experience_list]
@@ -88,5 +104,5 @@ def extract_job_titles(experience_list):
         features['job_titles'] = recent_job_titles
     else:
         features['job_titles'] = ''
-        warnings.warn('experience_list is not a list or tuple')
+        warnings.warn(f'experience_list is not a list or tuple in row: {idx}')
     return features
